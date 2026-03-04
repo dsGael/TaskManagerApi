@@ -11,7 +11,7 @@ import { ConfigModule } from '@nestjs/config';
     type: 'postgres',
   url: process.env.DB_URL,
   autoLoadEntities: true,
-  synchronize: true, 
+  synchronize: false, 
   ssl: {
     rejectUnauthorized: false,
   },
