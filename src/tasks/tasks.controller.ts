@@ -18,8 +18,8 @@ export class TasksController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.tasksService.findOne(+id);
+  findByUserId(@Param('id') id: number) {
+    return this.tasksService.findByUserId(+id);
   }
 
   @Patch(':id')

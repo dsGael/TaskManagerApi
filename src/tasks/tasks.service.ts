@@ -79,4 +79,18 @@ export class TasksService {
     const task = await this.findOne(id); 
     await this.taskRepository.remove(task);
   }
+
+  async findByUserId(userId: number): Promise<Task[]> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
+    }
+    return this.taskRepository.find({
+      where: { user: { id: userId } },
+      relations: {
+        user: true,
+      },
+    });
+  }
+
 }
