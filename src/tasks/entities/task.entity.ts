@@ -10,7 +10,7 @@ export class Task {
     @Column({ default: false })
     completed: boolean=false;
     
-   @ManyToOne(() => User, (user) => user.tasks, { onDelete: 'CASCADE' })
+    @ManyToOne(() => User, (user) => user.tasks, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
     user!: User;
 
