@@ -25,7 +25,9 @@ export class AuthService {
 
     return { 
       access_token: token,
-      name: findUser.user
+      name: findUser.user,
+      userId: findUser.id,
+
      };
 
     
