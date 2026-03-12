@@ -3,41 +3,73 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { Task } from './entities/task.entity'; // Asegúrate de que la ruta sea correcta
+import { Task } from './entities/task.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
-    const newTask = this.taskRepository.create(createTaskDto);
+    const user = await this.userRepository.findOneBy({ id: createTaskDto.userId });
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID ${createTaskDto.userId} no encontrado`);
+    }
+
+    const newTask = this.taskRepository.create({
+      title: createTaskDto.title,
+      completed: createTaskDto.completed ?? false,
+      user,
+    });
+
     return await this.taskRepository.save(newTask);
   }
 
   findAll(): Promise<Task[]> {
-    return this.taskRepository.find();
+    return this.taskRepository.find({
+      relations: {
+        user: true,
+      },
+    });
   }
 
   async findOne(id: number): Promise<Task> {
-    const task = await this.taskRepository.findOneBy({ id });
+    const task = await this.taskRepository.findOne({
+      where: { id },
+      relations: {
+        user: true,
+      },
+    });
+
     if (!task) {
       throw new NotFoundException(`Tarea con ID ${id} no encontrada`);
     }
+
     return task;
   }
 
   async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
-    // preload busca la entidad y le aplica los cambios del DTO
-    const task = await this.taskRepository.preload({
-      id: id,
-      ...updateTaskDto,
-    });
+    const task = await this.findOne(id);
 
-    if (!task) {
-      throw new NotFoundException(`No se pudo actualizar la tarea ${id}`);
+    if (updateTaskDto.title !== undefined) {
+      task.title = updateTaskDto.title;
+    }
+
+    if (updateTaskDto.completed !== undefined) {
+      task.completed = updateTaskDto.completed;
+    }
+
+    if (updateTaskDto.userId !== undefined) {
+      const user = await this.userRepository.findOneBy({ id: updateTaskDto.userId });
+      if (!user) {
+        throw new NotFoundException(`Usuario con ID ${updateTaskDto.userId} no encontrado`);
+      }
+      task.user = user;
     }
 
     return this.taskRepository.save(task);

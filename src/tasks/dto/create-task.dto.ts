@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsBoolean, IsOptional, MinLength } from 'class-validator';
+import { IsString, IsNotEmpty, IsBoolean, IsOptional, MinLength, IsInt, Min } from 'class-validator';
 
 export class CreateTaskDto {
     @IsString()
@@ -9,5 +9,9 @@ export class CreateTaskDto {
     @IsBoolean()
     @IsOptional()
     completed?: boolean;
+
+    @IsInt({ message: 'El userId debe ser un numero entero' })
+    @Min(1, { message: 'El userId debe ser mayor o igual a 1' })
+    userId!: number;
 }
 

@@ -1,20 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TasksService } from './tasks.service';
+import { UsersService } from './users.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Task } from './entities/task.entity';
-import { User } from 'src/users/entities/user.entity';
+import { User } from './entities/user.entity';
 
-describe('TasksService', () => {
-  let service: TasksService;
+describe('UsersService', () => {
+  let service: UsersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TasksService,
-        {
-          provide: getRepositoryToken(Task),
-          useValue: {},
-        },
+        UsersService,
         {
           provide: getRepositoryToken(User),
           useValue: {},
@@ -22,7 +17,7 @@ describe('TasksService', () => {
       ],
     }).compile();
 
-    service = module.get<TasksService>(TasksService);
+    service = module.get<UsersService>(UsersService);
   });
 
   it('should be defined', () => {

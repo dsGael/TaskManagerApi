@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 
 import { CreateTaskDto } from './create-task.dto';
-import { IsBoolean, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, Min, MinLength } from 'class-validator';
 
 export class UpdateTaskDto extends PartialType(CreateTaskDto) {
     @IsString()
@@ -13,4 +13,9 @@ export class UpdateTaskDto extends PartialType(CreateTaskDto) {
     @IsBoolean()
     @IsOptional()
     completed?: boolean;
+
+    @IsInt({ message: 'El userId debe ser un numero entero' })
+    @Min(1, { message: 'El userId debe ser mayor o igual a 1' })
+    @IsOptional()
+    userId?: number;
 }
